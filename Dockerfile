@@ -1,18 +1,33 @@
-# Buster ki jagah Bullseye (Debian 11) use karein jo stable hai
+# =========================================================================
+#  🧬 ADVANCED AUTOMATION ENGINE - DOCKER RUNTIME ENVIRONMENT
+#  👦 LEAD DEVELOPER & MODDER: Ovesh (https://t.me/OveshBoss)
+#  📡 OFFICIAL CHANNEL: OveshBossOfficial (https://t.me/OveshBossOfficial)
+# =========================================================================
+
+# Debian Bullseye is solid and perfect for VPS deployment
 FROM python:3.10-slim-bullseye
 
-# System updates aur git installation
-RUN apt-get update && apt-get install -y git
+# System updates and required build essentials
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Work directory set karein
+# Set working directory inside the container
 WORKDIR /app
+
+# Upgrade pip first to avoid wheels build errors
+RUN pip3 install -U pip
+
+# Copy only requirements first to leverage Docker layer caching
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -U -r requirements.txt
+
+# Copy the rest of the application files
 COPY . .
 
-# Requirements install karein
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
+# Setup execution permissions for our custom production runner
+RUN chmod +x run.sh
 
-# Render port fix aur bot start
-CMD gunicorn app:app --bind 0.0.0.0:$PORT --daemon && python3 main.py
-
-# Render wala PORT variable Hugging Face pe bhi kaam karega
-CMD gunicorn app:app --bind 0.0.0.0:7860 & python3 main.py
+# Start the Ovesh Automation Stack via the runner script
+CMD ["./run.sh"]
