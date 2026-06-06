@@ -11,8 +11,8 @@ class temp:
     IS_FRWD_CHAT = []
 
     CACHE = {}
-    ACTIVE_TASKS = {}from os import environ
 
+ACTIVE_TASKS = {}from os import environ
 class Config:
     API_ID = int(environ.get("API_ID", "23903140"))
     API_HASH = environ.get("API_HASH", "579f1bcf3eac1660d81ef34b09906012")
